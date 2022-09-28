@@ -11,6 +11,7 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
@@ -23,7 +24,17 @@ func main() {
 	http.HandleFunc("/count", counter)
 
 	http.HandleFunc("/gif", func(w http.ResponseWriter, r *http.Request) {
-		lissajous(w)
+		if err := r.ParseForm(); err != nil {
+			log.Print(err)
+		}
+
+		cycles := 0
+		for k, v := range r.Form {
+			if k == "cycles" {
+				cycles, _ = strconv.Atoi(v[0])
+			}
+		}
+		lissajous(w, cycles)
 	})
 	log.Fatal(http.ListenAndServe("localhost:8888", nil))
 }
@@ -77,15 +88,20 @@ const (
 	redIndex   = 4
 )
 
-func lissajous(out io.Writer) {
+func lissajous(out io.Writer, cycle int) {
 	// Local const
 	const (
-		cycles  = 5     // number of complete x oscillator revolutions
+		// cycles  =  5     // number of complete x oscillator revolutions
 		res     = 0.001 // angular resolution
 		size    = 100   // image canvas covers [-size..+size]
 		nframes = 64    // number of animation frames
 		delay   = 8     // delay between frames in 10ms units
 	)
+
+	cycles := 5
+	if cycle > 0 {
+		cycles = cycle
+	}
 
 	freq := rand.Float64() * 3.0        // relative frequency of y oscillator
 	anim := gif.GIF{LoopCount: nframes} // Instantiate a struct
@@ -95,7 +111,7 @@ func lissajous(out io.Writer) {
 		img := image.NewPaletted(rect, palette)
 
 		lineColorIndex := rand.Intn(3) + 1
-		for t := 0.0; t < cycles*2*math.Pi; t += res {
+		for t := 0.0; t < float64(cycles)*2*math.Pi; t += res {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
 			// img.SetColorIndex(size+int(x*size+0.5),
