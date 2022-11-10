@@ -2,11 +2,11 @@ package main
 
 import "fmt"
 
-type Point struct {
+type Point2 struct {
 	X, Y int
 }
 type Circle struct {
-	Center Point
+	Center Point2
 	Radius int
 }
 type Wheel struct {
@@ -15,16 +15,17 @@ type Wheel struct {
 }
 
 func main() {
-	var w Wheel
-	w = Wheel{
-		Circle: Circle{
-			Center: Point{X: 8, Y: 8},
-			Radius: 5,
-		},
-		Spokes: 20,
-	}
+
+	w := Wheel{Circle{Point2{8, 8}, 5}, 20}
+	// w := Wheel{
+	// 	Circle: Circle{
+	// 		Center: Point2{X: 8, Y: 8},
+	// 		Radius: 5,
+	// 	},
+	// 	Spokes: 20,
+	// }
 	fmt.Printf("%#v\n", w)
 
-	w.Circle.Center.X = 42
+	w.X = 42
 	fmt.Printf("%#v\n", w)
 }
