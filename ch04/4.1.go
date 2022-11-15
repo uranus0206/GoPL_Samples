@@ -72,6 +72,7 @@ func main() {
 	}
 
 	s1 := []int{5, 6, 7, 8, 9}
+	fmt.Printf("s1 address: %p\n", &s1)
 	fmt.Println(removeInt(s1, 2))
 	fmt.Println(removeInt2(s1, 2))
 }
@@ -119,6 +120,7 @@ func appendInt2(x []int, y ...int) []int {
 // slice remove
 // Notice the return will point the same address of original slice
 func removeInt(slice []int, i int) []int {
+	fmt.Printf("slice: %p\n", slice)
 	copy(slice[i:], slice[i+1:])
 	fmt.Println("After copy ", slice)
 	return slice[:len(slice)-1]
