@@ -35,7 +35,13 @@ func (s *Shop) baker(baked chan<- cake) {
 }
 
 func (s *Shop) icer(iced chan<- cake, baked <-chan cake) {
-
+	for c := range baked {
+		if s.Verbose {
+			fmt.Println("icing", c)
+		}
+		work(s.IceTime, s.IceStdDev)
+		iced <- c
+	}
 }
 
 func (s *Shop) inscriber(iced <-chan cake) {
